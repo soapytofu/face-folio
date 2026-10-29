@@ -20,7 +20,8 @@ Open http://127.0.0.1:4173 in a modern browser. ES modules and PDF workers requi
 - Match embedded photos to selectable text below each photo in grid rosters.
 - Names, school/program/degree, class year, pronouns, explicit major labels, and additional notes.
 - Edit any field, replace a photo, add or delete a person, and rename rosters.
-- Photo-first flashcards with keyboard shortcuts, shuffle, and known/still-learning progress.
+- Photo-first flashcards with keyboard shortcuts, shuffle, and known/still-learning progress. Refresh in the same browser tab resumes the current card, flipped side, shuffled order, and round results.
+- Study and quiz refreshes show a read-only cached card while saved rosters load, then enable interaction; changed or removed cards are checked against the saved roster. Quiz answers and scroll position are retained too.
 - Typed-name quizzes (the default) and optional multiple choice, with immediate feedback. Typed answers accept a first name, a full name, or an unambiguous first/last name and ignore case, accents, punctuation, and spacing. Enter submits an answer, then advances to the next person.
 - A Back to roster button on the PDF upload/update screen.
 - Multiple decks, search, filters, local persistence, and JSON backup/restore with photos and progress.

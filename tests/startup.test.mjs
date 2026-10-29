@@ -16,10 +16,11 @@ function boot(saved){
  runInNewContext(source,{
   document:{querySelector:key=>elements[key]??null,querySelectorAll:()=>[],addEventListener(){}},
   indexedDB:{open:()=>openRequest},
+  window:{scrollY:0,scrollTo(){},addEventListener(){}},
   sessionStorage:{getItem:()=>stored,setItem:(_key,value)=>{stored=value}},
   setTimeout:()=>1,clearTimeout(){},
  });
- return {renders,attributes,toast,stored:()=>stored,async open(){openRequest.result=database;openRequest.onsuccess();await tick()},async load(decks){readRequest.result=decks;readRequest.onsuccess();await tick()},async fail(){openRequest.onerror();await tick()}};
+ return {renders,attributes,toast,app,stored:()=>stored,async open(){openRequest.result=database;openRequest.onsuccess();await tick()},async load(decks){readRequest.result=decks;readRequest.onsuccess();await tick()},async fail(){openRequest.onerror();await tick()}};
 }
 
 test('slow database startup renders only the restored tab, never an interim import screen',async()=>{
@@ -53,4 +54,66 @@ test('unavailable database exits loading and leaves import and export usable',as
  assert.match(app.toast.textContent,/Browser storage is unavailable/);
  assert.equal(app.attributes['aria-busy'],'false');
  assert.equal(JSON.parse(app.stored()).activeId,'class');
+});
+
+const roster={id:'class',title:'Test class',created:1,cards:[{id:'one',name:'Alex'},{id:'two',name:'Jamie'},{id:'three',name:'Taylor'}]};
+const round={mode:'study',ids:['three','one','two'],index:1,flipped:true,onlyLearning:true,correct:1,review:0,ratings:{three:true}};
+test('refresh resumes shuffled card, flipped side, learning filter and ratings',async()=>{
+ const app=boot({view:'study',activeId:'class',session:round});
+ await app.open();await app.load([roster]);
+ assert.match(app.renders[0],/Card 2 of 3/);
+ assert.match(app.renders[0],/Show photo/);
+ assert.match(app.renders[0],/<h2>Alex<\/h2>/);
+ const resumed=JSON.parse(app.stored()).session;
+ assert.deepEqual(resumed.ids,round.ids);
+ assert.equal(resumed.onlyLearning,true);
+ assert.deepEqual(resumed.ratings,{three:true});
+});
+test('cached card is read-only while loading and matching data unlocks it without repainting',async()=>{
+ const app=boot({view:'study',activeId:'class',session:round,previewDecks:[roster]});
+ assert.equal(app.renders.length,1);
+ assert.match(app.renders[0],/Card 2 of 3/);
+ assert.equal(app.app.inert,true);
+ assert.equal(app.attributes['aria-busy'],'true');
+ await app.open();await app.load([roster]);
+ assert.equal(app.renders.length,1,'do not rebuild the portrait when the cached screen matches');
+ assert.equal(app.app.inert,false);
+ assert.equal(app.attributes['aria-busy'],'false');
+});
+test('a changed roster invalidates a stale round instead of displaying a missing card',async()=>{
+ const app=boot({view:'study',activeId:'class',session:round});
+ await app.open();await app.load([{...roster,cards:roster.cards.slice(1)}]);
+ assert.match(app.renders[0],/Card 1 of 2/);
+ assert.match(app.renders[0],/Reveal name and details/);
+ assert.doesNotMatch(app.renders[0],/Show photo/);
+});
+test('completed rounds remain on results after refresh',async()=>{
+ const app=boot({view:'study',activeId:'class',session:{...round,index:3,correct:2,review:1}});
+ await app.open();await app.load([roster]);
+ assert.match(app.renders[0],/Nice to meet them. Again./);
+ assert.match(app.renders[0],/2 marked “know it”/);
+});
+test('quiz refresh retains the question, answer feedback, options and score',async()=>{
+ const session={...round,mode:'quiz',options:['two','one','three'],answered:'one',typedAnswer:'Alex'};
+ const app=boot({view:'quiz',activeId:'class',session});
+ await app.open();await app.load([roster]);
+ assert.match(app.renders[0],/Question 2 of 3/);
+ assert.match(app.renders[0],/That’s right/);
+ assert.match(app.renders[0],/value="Alex"/);
+ assert.equal(JSON.parse(app.stored()).session.correct,1);
+});
+test('storage failure cannot turn a partial preview into an editable roster',async()=>{
+ const app=boot({view:'study',activeId:'class',session:round,previewDecks:[roster]});
+ await app.fail();
+ assert.match(app.renders.at(-1),/Your roster, ready to review/);
+ assert.doesNotMatch(app.renders.at(-1),/Current roster/);
+ assert.equal(app.app.inert,false);
+});
+
+test('changed saved details replace the preview once the database is ready',async()=>{
+ const app=boot({view:'study',activeId:'class',session:round,previewDecks:[roster]});
+ await app.open();await app.load([{...roster,cards:roster.cards.map(c=>c.id==='one'?{...c,name:'Alex Updated'}:c)}]);
+ assert.equal(app.renders.length,2);
+ assert.match(app.renders.at(-1),/<h2>Alex Updated<\/h2>/);
+ assert.equal(app.app.inert,false);
 });

@@ -58,4 +58,5 @@
  .study-main .flashcard-details .hint{display:block}
 }
 
-.startup-screen{min-height:100dvh;display:grid;place-items:center;color:var(--muted);font-size:13px}
+.startup-screen{min-height:100dvh;display:grid;place-items:center;color:var(--muted);font-size:13px;animation:startup-message 0s .4s both}
+@keyframes startup-message{from{opacity:0}to{opacity:1}}
