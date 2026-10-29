@@ -21,6 +21,12 @@ Open http://127.0.0.1:4173 in a modern browser. ES modules and PDF workers requi
 - Photo-first flashcards with keyboard shortcuts, shuffle, and known/still-learning progress.
 - Multiple-choice name quizzes with immediate feedback.
 - Multiple decks, search, filters, local persistence, and JSON backup/restore with photos and progress.
+- Update an existing roster from a newer PDF with an added/removed/matched preview. Unique original names retain progress, notes, and explicit edits; photos and unedited details refresh. Duplicate or changed names need manual review.
+- Undo the most recent update. Failed or canceled imports leave the existing roster unchanged. Same-filename uploads prompt you to update an existing roster or create a separate one.
+
+## Updating a roster
+
+Upload a PDF to create a reviewable roster immediately. From that roster, click **Update roster**, choose the latest PDF, inspect the change summary, and click **Apply roster update**. You can also choose an existing roster in the upload destination selector. The roster stays in the same browser and keeps its title. Use **Undo last update** to restore the previous version.
 
 ## Privacy and limitations
 
@@ -47,6 +53,7 @@ If using an existing external Node dependency directory, set `FACEFOLIO_NODE_MOD
 ```sh
 node --check dist/app.mjs
 node --check dist/parser.mjs
+node --test tests/roster-update.test.mjs
 ```
 
 ## Files
@@ -55,5 +62,6 @@ node --check dist/parser.mjs
 - `dist/style.css`: responsive styles
 - `dist/app.mjs`: import workflow, persistence, roster editor, study and quiz UI
 - `dist/parser.mjs`: PDF image geometry and nearby-text matching
+- `dist/roster-update.mjs`: unambiguous name matching, edit preservation, update planning, and undo snapshot
 - `dist/vendor/`: self-hosted PDF.js and license
 - `.openai/hosting.json`: private Sites deployment identity
