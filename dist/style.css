@@ -57,3 +57,5 @@
  .study-main .flashcard-details h2{font-size:28px;margin:0 0 10px}
  .study-main .flashcard-details .hint{display:block}
 }
+
+.startup-screen{min-height:100dvh;display:grid;place-items:center;color:var(--muted);font-size:13px}
