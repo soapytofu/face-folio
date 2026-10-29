@@ -1,6 +1,6 @@
 # Facefolio
 
-A browser-local PDF photo roster to flashcard application. No API keys, backend, build step, or account integration required. The hosted app is owner-private.
+A browser-local PDF photo roster to flashcard application. No API keys, backend, build step, or account integration required. The hosted app is accessible to anyone with its link. Each visitor’s rosters stay in their own browser.
 
 ## Run locally
 
@@ -64,4 +64,4 @@ node --test tests/roster-update.test.mjs
 - `dist/parser.mjs`: PDF image geometry and nearby-text matching
 - `dist/roster-update.mjs`: unambiguous name matching, edit preservation, update planning, and undo snapshot
 - `dist/vendor/`: self-hosted PDF.js and license
-- `.openai/hosting.json`: private Sites deployment identity
+- `.openai/hosting.json`: Sites deployment identity
