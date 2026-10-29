@@ -1,6 +1,6 @@
 # Facefolio
 
-A browser-local PDF photo roster to flashcard application. No API keys, backend, build step, or account integration required. The hosted app is accessible to anyone with its link. Each visitor’s rosters stay in their own browser.
+A browser-local PDF photo roster to flashcard application. No API keys, backend, build step, or account integration required. The latest version runs locally. The older hosted version is private; these updates have not been published. Rosters stay in your own browser.
 
 ## Run locally
 
