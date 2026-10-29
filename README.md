@@ -4,10 +4,12 @@ A browser-local PDF photo roster to flashcard application. No API keys, backend,
 
 ## Run locally
 
-From this directory:
+On macOS, double-click `start.command`. It opens Facefolio in your browser. Keep the Terminal window open while using the app; close it or press Control-C when finished. Python 3 is required. Use the same browser each time to keep access to saved rosters.
+
+Or, from this directory:
 
 ```sh
-python3 -m http.server 4173 --bind 127.0.0.1 --directory dist
+python3 serve.py
 ```
 
 Open http://127.0.0.1:4173 in a modern browser. ES modules and PDF workers require HTTP(S); do not open index.html with file://.
