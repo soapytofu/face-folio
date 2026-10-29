@@ -29,3 +29,31 @@
  .edit-photo{flex-wrap:wrap}
  .edit-photo input{max-width:100%!important}
 }
+
+/* Reserve the same card space for both sides so flipping never shifts controls. */
+.study-main .flashcard{height:390px;min-height:0;overflow:auto;overflow-anchor:none;justify-content:flex-start;padding:18px 24px}
+.flashcard-face{display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;width:100%;height:100%;margin:auto 0}
+.study-main .flashcard:not(.is-flipped) .person-photo{width:auto;height:calc(100% - 76px);max-height:277px;max-width:100%;object-fit:contain}
+.study-main .flashcard .hint{margin-top:12px}
+.study-main .is-flipped .flashcard-face{height:auto}
+.study-main .flashcard h2{overflow-wrap:anywhere;max-width:100%}
+@media(min-width:801px) and (min-height:560px){
+ .study-main{height:calc(100dvh - 83px);padding:18px 32px;display:flex;flex-direction:column}
+ .study-main .intro{flex-shrink:0;margin-bottom:14px}
+ .study-main .intro h1{font-size:30px;margin:6px 0}
+ .study-main .intro .eyebrow{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+ .study-main .study-wrap{width:100%;min-height:0;flex:1;display:flex;flex-direction:column}
+ .study-main .study-top{flex-shrink:0;margin:0 0 8px;gap:10px}
+ .study-main .progress{flex-shrink:0;margin-bottom:10px}
+ .study-main .flashcard{height:0;flex:1;min-height:0}
+ .study-main .study-actions{flex-shrink:0;margin-top:12px}
+ .study-main .keyboard-hint{flex-shrink:0;margin-top:10px}
+ .study-main .completion{overflow:auto;min-height:0}
+}
+
+@media(min-width:801px){
+ .study-main .is-flipped .flashcard-face{flex-direction:row;gap:24px;text-align:left}
+ .study-main .flashcard-details{min-width:0;max-width:440px}
+ .study-main .flashcard-details h2{font-size:28px;margin:0 0 10px}
+ .study-main .flashcard-details .hint{display:block}
+}
