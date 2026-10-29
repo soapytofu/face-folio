@@ -21,7 +21,7 @@ Open http://127.0.0.1:4173 in a modern browser. ES modules and PDF workers requi
 - Names, school/program/degree, class year, pronouns, explicit major labels, and additional notes.
 - Edit any field, replace a photo, add or delete a person, and rename rosters.
 - Photo-first flashcards with keyboard shortcuts, shuffle, and known/still-learning progress.
-- Typed-name quizzes (the default) and optional multiple choice, with immediate feedback. Typed answers accept a full name or an unambiguous first/last name and ignore case, accents, punctuation, and spacing. Enter submits an answer, then advances to the next person.
+- Typed-name quizzes (the default) and optional multiple choice, with immediate feedback. Typed answers accept a first name, a full name, or an unambiguous first/last name and ignore case, accents, punctuation, and spacing. Enter submits an answer, then advances to the next person.
 - A Back to roster button on the PDF upload/update screen.
 - Multiple decks, search, filters, local persistence, and JSON backup/restore with photos and progress.
 - Update an existing roster from a newer PDF with an added/removed/matched preview. Unique original names retain progress, notes, and explicit edits; photos and unedited details refresh. Duplicate or changed names need manual review.

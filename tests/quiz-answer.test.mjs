@@ -15,9 +15,16 @@ test('shared first and last names require a full name',()=>{
  assert.equal(checkTypedName('Alex Chen',alex,[alex,other]),false);
  assert.equal(checkTypedName('Alex Morgan Chen',alex,[alex,other]),true);
 });
-test('empty, first-only, wrong-person and misspelled answers are incorrect',()=>{
- for(const answer of ['', '   ', 'Alex', 'Sam Green', 'Alex Chenn'])assert.equal(checkTypedName(answer,alex,[alex,sam]),false);
+test('empty, wrong-person and misspelled answers are incorrect',()=>{
+ for(const answer of ['', '   ', 'Sam Green', 'Alex Chenn', 'Aleks'])assert.equal(checkTypedName(answer,alex,[alex,sam]),false);
 });
 test('single-token names can be answered in full',()=>{
  const person={name:'Sasha'};assert.equal(checkTypedName('sasha',person,[person]),true);
+});
+
+test('first names are accepted even when another person shares the same first name',()=>{
+ const people=[alex,{name:'Alex Jordan Chen'},sam];
+ assert.equal(checkTypedName('  ALEX  ',alex,people),true);
+ assert.equal(checkTypedName('Sam',alex,people),false);
+ const jose={name:'José Martinez'};assert.equal(checkTypedName('jose',jose,[jose]),true);
 });

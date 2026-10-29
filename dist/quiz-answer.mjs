@@ -1,4 +1,4 @@
-// Ignore presentation differences, but never accept fuzzy spelling or a first name alone.
+// Accept a first name or full name, ignoring presentation differences but not misspellings.
 export function normalizeName(value) {
   return String(value || '').normalize('NFKD').replace(/\p{M}/gu, '').toLowerCase().replace(/[^\p{L}\p{N}]/gu, '');
 }
@@ -9,6 +9,8 @@ function shortName(name) {
 export function checkTypedName(answer, person, people) {
   const submitted = normalizeName(answer);
   if (!submitted) return false;
+  const firstName = String(person.name || '').trim().split(/\s+/)[0];
+  if (submitted === normalizeName(firstName)) return true;
   if (submitted === normalizeName(person.name)) return true;
   const short = shortName(person.name);
   return !!short && submitted === short && people.filter(p => shortName(p.name) === short).length === 1;
