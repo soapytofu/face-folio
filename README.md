@@ -20,12 +20,12 @@ Open http://127.0.0.1:4173 in a modern browser. ES modules and PDF workers requi
 - Match embedded photos to selectable text below each photo in grid rosters.
 - Names, school/program/degree, class year, pronouns, explicit major labels, and additional notes.
 - Edit any field, replace a photo, add or delete a person, and rename rosters.
-- Photo-first flashcards with keyboard shortcuts, shuffle, and known/still-learning progress. Refresh in the same browser tab resumes the current card, flipped side, shuffled order, and round results.
+- Photo-first flashcards with keyboard shortcuts, shuffle, and known/still-learning progress. Switching tabs or refreshing resumes independent flashcard and quiz rounds, including the current card, flipped side, shuffled order, and results. Skipped cards are counted separately and can be retried.
 - Study and quiz refreshes show a read-only cached card while saved rosters load, then enable interaction; changed or removed cards are checked against the saved roster. Quiz answers and scroll position are retained too.
 - Typed-name quizzes (the default) and optional multiple choice, with immediate feedback. Typed answers accept a first name, a full name, or an unambiguous first/last name and ignore case, accents, punctuation, and spacing. Enter submits an answer, then advances to the next person.
 - A Back to roster button on the PDF upload/update screen.
-- Multiple decks, search, filters, local persistence, and JSON backup/restore with photos and progress.
-- Update an existing roster from a newer PDF with an added/removed/matched preview. Unique original names retain progress, notes, and explicit edits; photos and unedited details refresh. Duplicate or changed names need manual review.
+- Multiple decks, search, filters, local persistence, and JSON backup/restore with photos and progress. Restoring a backup clears unrelated search and filters. Failed saves leave a visible warning with Retry save and Export backup until saving succeeds.
+- Update an existing roster from a newer PDF with an added/removed/matched preview. Unique original names retain progress, notes, and explicit edits; photos and unedited details refresh. Duplicate or changed names need manual review. Undo and Redo require confirmation and preserve one reverse snapshot, including edits and progress made after the update.
 - Undo the most recent update. Failed or canceled imports leave the existing roster unchanged. Same-filename uploads prompt you to update an existing roster or create a separate one.
 
 ## Updating a roster

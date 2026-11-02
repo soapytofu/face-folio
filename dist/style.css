@@ -60,3 +60,11 @@
 
 .startup-screen{min-height:100dvh;display:grid;place-items:center;color:var(--muted);font-size:13px;animation:startup-message 0s .4s both}
 @keyframes startup-message{from{opacity:0}to{opacity:1}}
+
+.save-status{flex-shrink:0;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.save-status[hidden]{display:none}
+.save-status span{flex:1;min-width:200px}
+@media(min-width:801px){
+ .study-main .is-flipped .flashcard-face{align-items:flex-start}
+ .study-main .is-flipped .back-photo{position:sticky;top:0}
+}

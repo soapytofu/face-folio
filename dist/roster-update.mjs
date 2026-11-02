@@ -39,7 +39,15 @@ export function planRosterUpdate(previous, incoming, fileName, importReport, now
   });
   const removed = previous.cards.filter(card => !used.has(card.id)).map(card => card.name);
   const summary = {retained, added, removed, ambiguous: [...new Set(ambiguous)]};
-  const {previousVersion: discarded, ...snapshot} = previous;
-  const next = {...previous, cards, fileName, updatedAt: now, importReport, lastUpdate: summary, previousVersion: snapshot};
+  const {previousVersion: discarded, redoVersion: discardedRedo, ...snapshot} = previous;
+  const next = {...snapshot, cards, fileName, updatedAt: now, importReport, lastUpdate: summary, previousVersion: snapshot};
   return {next, summary};
+}
+
+// Store the reverse operation as one bounded snapshot, including later edits.
+export function planRosterRollback(current, redo=false) {
+  const source=current[redo?'redoVersion':'previousVersion'];
+  if(!source)return null;
+  const strip=({previousVersion,redoVersion,...value})=>structuredClone(value);
+  return {...strip(source),title:current.title,[redo?'previousVersion':'redoVersion']:strip(current)};
 }

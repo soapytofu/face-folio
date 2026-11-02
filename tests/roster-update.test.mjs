@@ -42,3 +42,10 @@ test('explicitly cleared edits stay empty and changed source names are not guess
  const changed=planRosterUpdate(old,[card('c','Alex Chang')],'new.pdf',{});
  assert.equal(changed.summary.retained.length,0);assert.equal(changed.summary.removed.length,1);
 });
+
+test('new PDF update discards redo history and keeps snapshots bounded',()=>{
+ const old=deck([card('a','Alex')]);old.redoVersion=deck([card('b','Sam')]);
+ const next=planRosterUpdate(old,[card('c','Alex')],'next.pdf',{}).next;
+ assert.equal(next.redoVersion,undefined);
+ assert.equal(next.previousVersion.redoVersion,undefined);
+});
