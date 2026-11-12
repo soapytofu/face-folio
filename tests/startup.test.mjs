@@ -160,6 +160,68 @@ test('adding a course returns to all courses; updating returns to the selected c
  assert.equal(app.run('view'),'roster');
  assert.equal(app.run('activeId'),'class');
 });
+async function courseManagementApp(){
+ const app=await loadedApp();
+ app.run(`decks.push({id:'other',title:'Second course',created:0,cards:[{id:'other-one',name:'Robin'}]});navigate('study');action('skip');navigate('rosters')`);
+ app.context.writes=[];app.context.deletions=[];app.context.saveFails=false;
+ app.run(`db={transaction(){const tx={objectStore:()=>({put(d){writes.push(d);queueMicrotask(()=>saveFails?tx.onabort():tx.oncomplete())},delete(id){deletions.push(id);queueMicrotask(()=>saveFails?tx.onerror():tx.oncomplete())}})};return tx}}`);
+ const dialog=app.elements['#editor'];
+ Object.assign(dialog,{setAttribute(){},removeAttribute(){},querySelectorAll:()=>[],showModal(){this.open=true},close(){this.open=false}});
+ for(const id of ['#cancel-course','#course-error','#rename-course-form','#backup-course','#confirm-delete-course'])app.elements[id]={focus(){}};
+ app.elements['#course-title']={value:'',focus(){},select(){}};
+ return app;
+}
+test('rename from a course card targets that course and preserves the active course and round',async()=>{
+ const app=await courseManagementApp();app.run(`renameCourse('other')`);
+ assert.match(app.elements['#editor'].innerHTML,/value="Second course"/);
+ app.elements['#course-title'].value='  ';
+ await app.elements['#rename-course-form'].onsubmit({preventDefault(){}});
+ assert.equal(app.context.writes.length,0);
+ assert.match(app.elements['#course-error'].textContent,/Enter a course name/);
+ app.elements['#course-title'].value='  Biology & Society  ';
+ await app.elements['#rename-course-form'].onsubmit({preventDefault(){}});
+ assert.equal(app.context.writes[0].id,'other');
+ assert.equal(app.context.writes[0].title,'Biology & Society');
+ assert.equal(app.run('activeId'),'class');
+ assert.equal(app.run('view'),'rosters');
+ assert.match(app.renders.at(-1),/Biology &amp; Society/);
+ app.run(`openRoster('class');navigate('study')`);assert.match(app.renders.at(-1),/Card 2 of 3/);
+});
+test('failed rename leaves the original title and dialog available for retry',async()=>{
+ const app=await courseManagementApp();app.context.saveFails=true;app.run(`renameCourse('other')`);
+ app.elements['#course-title'].value='New title';
+ await app.elements['#rename-course-form'].onsubmit({preventDefault(){}});
+ assert.equal(app.run(`decks.find(d=>d.id==='other').title`),'Second course');
+ assert.equal(app.elements['#editor'].open,true);
+ assert.match(app.elements['#course-error'].textContent,/could not be saved/);
+ app.context.saveFails=false;await app.elements['#rename-course-form'].onsubmit({preventDefault(){}});
+ assert.equal(app.run(`decks.find(d=>d.id==='other').title`),'New title');
+ assert.equal(app.elements['#editor'].open,false);
+});
+test('delete requires its dialog action, exports the chosen course, and preserves it on failure',async()=>{
+ const app=await courseManagementApp();app.run(`exportDeck=d=>{exportedId=d.id};deleteCourse('other')`);
+ app.elements['#backup-course'].onclick();assert.equal(app.run('exportedId'),'other');
+ app.elements['#cancel-course'].onclick();assert.equal(app.context.deletions.length,0);
+ app.run(`deleteCourse('other')`);app.context.saveFails=true;
+ await app.elements['#confirm-delete-course'].onclick();
+ assert.equal(app.run('decks.length'),2);
+ assert.equal(app.elements['#editor'].open,true);
+ assert.match(app.elements['#course-error'].textContent,/could not be deleted/);
+ app.context.saveFails=false;await app.elements['#confirm-delete-course'].onclick();
+ assert.equal(app.run('decks.length'),1);
+ assert.equal(app.run('activeId'),'class');
+ assert.equal(app.elements['#editor'].open,false);
+ app.run(`openRoster('class');navigate('study')`);assert.match(app.renders.at(-1),/Card 2 of 3/);
+});
+test('deleting the last course clears stale rounds and leaves an empty course grid after refresh',async()=>{
+ const app=await courseManagementApp();
+ await app.run(`removeCourse('other')`);await app.run(`removeCourse('class')`);
+ assert.equal(app.run('activeId'),null);
+ assert.equal(app.run('rounds.size'),0);
+ assert.match(app.renders.at(-1),/Your courses start here/);
+ const refreshed=boot(JSON.parse(app.stored()));await refreshed.open();await refreshed.load([]);
+ assert.match(refreshed.renders.at(-1),/Your courses start here/);
+});
 test('switching tabs preserves independent study and quiz rounds, even through roster refresh',async()=>{
  const app=await loadedApp();
  app.run(`navigate('study');action('skip');action('flip');navigate('quiz');session.typedAnswer='draft';navigate('roster');navigate('study')`);
