@@ -63,6 +63,25 @@
 
 .save-status{flex-shrink:0;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .save-status[hidden]{display:none}
+.course-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(270px,100%),1fr));gap:22px}
+.course-card{min-width:0;display:flex;flex-direction:column;text-align:left;padding:24px;border:1px solid var(--line);border-radius:14px;background:#fffefb;transition:border-color .15s,box-shadow .15s}
+.course-card:hover{border-color:#9bad9b;box-shadow:0 5px 20px #294f410b}
+.course-card-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:24px}
+.course-icon{display:inline-grid;place-items:center;width:44px;height:44px;border-radius:12px;background:#e9eee3;color:var(--green);flex-shrink:0}
+.course-icon svg{width:22px;height:22px}
+.course-size{font-size:11px;color:var(--muted);padding:6px 10px;background:#f3f4ee;border-radius:20px}
+.course-name{display:block;font:normal 27px/1.2 Georgia,serif;color:var(--green);overflow-wrap:anywhere;margin-bottom:9px}
+.course-source{display:block;font-size:11px;line-height:1.6;color:var(--muted);overflow-wrap:anywhere;margin-bottom:26px}
+.course-learning{display:flex;justify-content:space-between;gap:12px;font-size:11px;color:var(--muted);margin-top:auto}
+.course-progress{display:block;height:5px;border-radius:5px;background:#e9ede3;overflow:hidden;margin:10px 0 20px}
+.course-progress>span{display:block;height:100%;background:#6d8c70;border-radius:inherit}
+.course-card-footer{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;border-top:1px solid var(--line);padding-top:16px;font-size:11px;color:var(--muted)}
+.course-open{display:inline-flex;align-items:center;gap:6px;color:var(--green);font-weight:600}
+.course-open svg{width:15px;height:15px}
+.course-empty{text-align:center;padding:48px 24px}
+.course-empty .btn{margin-top:12px}
+#roster-title:focus{outline:none}
+@media(max-width:520px){.course-card{padding:20px}.course-grid{gap:16px}}
 .save-status span{flex:1;min-width:200px}
 @media(min-width:801px){
  .study-main .is-flipped .flashcard-face{align-items:flex-start}

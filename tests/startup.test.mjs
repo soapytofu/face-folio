@@ -127,7 +127,39 @@ function setupSave(app,fail=false){
  app.context.saveFails=fail;
  app.run(`db={transaction(){const tx={objectStore:()=>({put(){queueMicrotask(()=>saveFails?tx.onerror():tx.oncomplete())}})};return tx}}`);
 }
-async function loadedApp(){const app=boot(null);await app.open();await app.load([JSON.parse(JSON.stringify(roster))]);return app}
+async function loadedApp(){const app=boot(null);await app.open();await app.load([JSON.parse(JSON.stringify(roster))]);app.run(`openRoster('class')`);return app}
+test('course cards open the right roster and preserve separate rounds across refresh',async()=>{
+ const other={id:'biology',title:'Biology 101',created:2,cards:[{id:'bio-one',name:'Sam',known:true},{id:'bio-two',name:'Robin'}]};
+ const app=boot(null);await app.open();await app.load([roster,other]);
+ assert.match(app.renders.at(-1),/data-open-roster="class"/);
+ assert.match(app.renders.at(-1),/data-open-roster="biology"/);
+ assert.match(app.renders.at(-1),/1 of 2 names known/);
+ app.run(`openRoster('class');navigate('study');action('skip');action('flip');navigate('rosters');openRoster('biology')`);
+ assert.equal(app.run('activeId'),'biology');
+ assert.match(app.renders.at(-1),/<h3>Sam<\/h3>/);
+ assert.doesNotMatch(app.renders.at(-1),/<h3>Alex<\/h3>/);
+ app.run(`navigate('quiz');session.typedAnswer='Sam';navigate('rosters')`);
+ const reopened=boot(JSON.parse(app.stored()));await reopened.open();await reopened.load([roster,other]);
+ assert.match(reopened.renders.at(-1),/<h1>My rosters<\/h1>/);
+ reopened.run(`openRoster('class');navigate('study')`);
+ assert.match(reopened.renders.at(-1),/Card 2 of 3/);
+ assert.match(reopened.renders.at(-1),/Show photo/);
+ reopened.run(`navigate('rosters');openRoster('biology');navigate('quiz')`);
+ assert.match(reopened.renders.at(-1),/value="Sam"/);
+});
+test('adding a course returns to all courses; updating returns to the selected course',async()=>{
+ const app=await loadedApp();
+ app.run(`navigate('rosters');navigate('import')`);
+ assert.equal(app.run('updateTargetId'),null);
+ assert.match(app.renders.at(-1),/Back to my rosters/);
+ await app.run(`action('back-to-roster')`);
+ assert.equal(app.run('view'),'rosters');
+ app.run(`openRoster('class')`);await app.run(`action('update-roster')`);
+ assert.equal(app.run('updateTargetId'),'class');
+ await app.run(`action('back-to-roster')`);
+ assert.equal(app.run('view'),'roster');
+ assert.equal(app.run('activeId'),'class');
+});
 test('switching tabs preserves independent study and quiz rounds, even through roster refresh',async()=>{
  const app=await loadedApp();
  app.run(`navigate('study');action('skip');action('flip');navigate('quiz');session.typedAnswer='draft';navigate('roster');navigate('study')`);
